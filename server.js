@@ -27,6 +27,11 @@ app.prepare().then(() => {
       scopes: ["read_products"],
       afterAuth(ctx) {
         const { shop, accessToken } = ctx.session;
+        ctx.cookies.set("shopOrigin", shop, {
+          httpOnly: false,
+          secure: true,
+          sameSite: "none",
+        });
         ctx.redirect("/");
       },
     })
@@ -34,7 +39,7 @@ app.prepare().then(() => {
   server.use(verifyRequest());
   server.use(async (ctx) => {
     await handle(ctx.req, ctx.res);
-    ctx.respond = fasle;
+    ctx.respond = false;
     ctx.res.statusCode = 200;
     return;
   });
